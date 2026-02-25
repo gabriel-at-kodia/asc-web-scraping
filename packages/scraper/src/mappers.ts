@@ -1,4 +1,7 @@
-import { CHILD_IMAGE_INDEXES } from "@/csv-schema.ts";
+import {
+  CHILD_IMAGE_INDEXES,
+  WOO_GALLERY_IMAGE_INDEXES,
+} from "@/csv-schema.ts";
 import { getSpecifications } from "@/templates/specifications.ts";
 import type { ChildRow, ParentRow, ParsedProduct } from "@/types.ts";
 
@@ -84,10 +87,9 @@ export function mapChildRows(product: ParsedProduct): ChildRow[] {
   const heightValues = product.heights.join(",");
 
   return product.variations.map((variation) => {
-    const generatedMainImage = buildChildImageUrl(variation.childSku, null);
-    const galleryImages = [generatedMainImage, ...variation.subImages]
-      .filter(Boolean)
-      .join(",");
+    const galleryImages = WOO_GALLERY_IMAGE_INDEXES.map((index) =>
+      buildChildImageUrl(variation.childSku, index),
+    ).join(",");
 
     const generatedImages = CHILD_IMAGE_INDEXES.map((index) =>
       buildChildImageUrl(variation.childSku, index),

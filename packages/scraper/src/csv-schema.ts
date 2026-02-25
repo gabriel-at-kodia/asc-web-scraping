@@ -44,6 +44,7 @@ export const FAILURE_COLUMNS = ["URL", "Reason", "Missing Fields"] as const;
 
 export const CHILD_IMAGE_INDEXES: Array<number | null> = [
   null,
+  0,
   1,
   2,
   3,
@@ -55,8 +56,20 @@ export const CHILD_IMAGE_INDEXES: Array<number | null> = [
   16,
   17,
   18,
-  19,
-  20,
-  21,
-  22,
+];
+
+export const WOO_GALLERY_IMAGE_INDEXES: Array<number | null> = [
+  null,
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  16,
+  17,
+  18,
 ];
