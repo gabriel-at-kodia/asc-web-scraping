@@ -21,6 +21,43 @@ function buildChildImageUrl(sku: string, index: number | null): string {
     .padStart(2, "0")}.jpg`;
 }
 
+function buildSearchKeywords(
+  product: ParsedProduct,
+  sampleSku: string,
+): string {
+  const brand = product.material.trim() || product.modelName.split(/\s+/)[0];
+  const textBlob = [
+    product.shortDescription,
+    product.longDescription,
+    ...product.bulletPoints,
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  const phrases = [
+    brand,
+    "shutters",
+    "exterior shutters",
+    "functional shutters",
+    "composite shutters",
+    "window shutters",
+    "exterior window shutters",
+    "custom shutters",
+    "decorative shutters",
+    "painted shutters",
+    "polymer shutters",
+    "foam shutters",
+  ].filter((phrase) => phrase !== undefined);
+
+  if (textBlob.includes("water")) phrases.push("waterproof shutters");
+  if (textBlob.includes("urethane")) phrases.push("urethane shutters");
+
+  const deduped = [...new Set(phrases.map((phrase) => phrase.trim()))].filter(
+    Boolean,
+  );
+  return [sampleSku, ...deduped].join("; ");
+}
+
 export function mapParentRow(product: ParsedProduct): ParentRow {
   const finishes = product.variations.map((variation) => variation.finishName);
   const firstVariation = product.variations[0]!;
@@ -71,7 +108,7 @@ export function mapParentRow(product: ParsedProduct): ParentRow {
     "Bullet Point 3": product.bulletPoints[2] ?? "",
     "Bullet Point 4": product.bulletPoints[3] ?? "",
     "Bullet Point 5": product.bulletPoints[4] ?? "",
-    "Search Keywords": product.searchKeywords,
+    "Search Keywords": buildSearchKeywords(product, firstVariation.childSku),
     "Installation Guide/Manual PDF": product.docs.installationGuide,
     "Line Drawing PDF": product.docs.lineDrawing,
     "Measurement Guide PDF": product.docs.measurementGuide,

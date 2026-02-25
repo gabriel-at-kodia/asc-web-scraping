@@ -31,7 +31,8 @@ const parsedProduct: ParsedProduct = {
       finishName: "Antigua",
       finishCode: "AN",
       childSku: "ECC001ACAN",
-      mainImage: "https://images.architecturalinfo.com/images/id/zoom/CUSTOM-ECC001ACAN.jpg",
+      mainImage:
+        "https://images.architecturalinfo.com/images/id/zoom/CUSTOM-ECC001ACAN.jpg",
       subImages: [
         "https://images.architecturalinfo.com/images/id/zoom/CUSTOM-ECC001ACAN-01.jpg",
       ],
@@ -51,8 +52,12 @@ describe("mappers", () => {
     expect(row.SKU).toBe("ECC001AC");
     expect(row["Attribute 1 value(s)"]).toBe("Antigua");
     expect(row.vva_default_formula).toBe("base+width*height*2*0.26");
-    expect(row.Categories).toBe("EnduraCore Composite, EnduraCore Composite > Test Style");
+    expect(row.Categories).toBe(
+      "EnduraCore Composite, EnduraCore Composite > Test Style",
+    );
     expect(row.Description).toContain("Product Overview");
+    expect(row["Search Keywords"]).toContain("ECC001ACAN;");
+    expect(row["Search Keywords"]).toContain("EnduraCore");
   });
 
   test("maps child rows with generated image list and vva values", () => {
@@ -61,7 +66,8 @@ describe("mappers", () => {
     expect(rows.length).toBe(1);
     expect(rows[0]?.Type).toBe("variation");
     expect(rows[0]?.SKU).toBe("ECC001ACAN");
-    expect(rows[0]?.Images).toContain("CUSTOM-ECC001ACAN-22.jpg");
+    expect(rows[0]?.Images).toContain("ECC001101ACAN-18.jpg");
+    expect(rows[0]?.Images).toContain("ECC001101ACAN-00.jpg");
     expect(rows[0]?.vva_values_json).toBe('{"width":"12,15","height":"25,30"}');
   });
 });
