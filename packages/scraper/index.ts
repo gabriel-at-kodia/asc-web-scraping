@@ -1,50 +1,26 @@
-import { mkdir } from "node:fs/promises";
-import { scrape } from "@/scraper.ts";
-import { CSV_HEADERS, extractProduct, rowToCsv } from "@/extract.ts";
+import { runPipeline } from "@/pipeline.ts";
+
+function getArgValue(args: string[], key: string): string | undefined {
+  const idx = args.indexOf(key);
+  if (idx === -1) return undefined;
+  return args[idx + 1];
+}
 
 const args = Bun.argv.slice(2);
+const inputPath = getArgValue(args, "--input");
 const useBrowser = args.includes("--browser");
-const url = args.find((a) => !a.startsWith("--"));
 
-if (!url) {
-  console.error("Usage: bun index.ts [--browser] <url>");
+if (!inputPath) {
+  console.error("Usage: bun index.ts [--browser] --input <path-to-urls.txt>");
   process.exit(1);
 }
 
-try {
-  new URL(url);
-} catch {
-  console.error(`Invalid URL: ${url}`);
-  process.exit(1);
-}
+const summary = await runPipeline({ inputPath, browser: useBrowser });
 
-console.log(`Scraping: ${url}${useBrowser ? " (headless browser)" : ""}\n`);
-
-const { status, title, html, $ } = await scrape(url, { browser: useBrowser });
-
-const artifactsDir = "artifacts";
-const outDir = "out";
-await mkdir(artifactsDir, { recursive: true });
-await mkdir(outDir, { recursive: true });
-
-const htmlPath = `${artifactsDir}/scraped.html`;
-await Bun.write(htmlPath, html);
-console.log(
-  `Saved HTML to ${htmlPath} (${html.length.toLocaleString()} chars)\n`,
-);
-
-console.log(`Status: ${status}`);
-console.log(`Title:  ${title}\n`);
-
-const row = extractProduct($);
-
-for (const header of CSV_HEADERS) {
-  const val = row[header];
-  const preview = val.length > 80 ? val.slice(0, 80) + "…" : val;
-  console.log(`  ${header}: ${preview}`);
-}
-
-const csvPath = `${outDir}/output.csv`;
-const csvContent = CSV_HEADERS.join(",") + "\n" + rowToCsv(row) + "\n";
-await Bun.write(csvPath, csvContent);
-console.log(`\nCSV written to ${csvPath}`);
+console.log("CSV pipeline completed.");
+console.log(`Total URLs:     ${summary.totalUrls}`);
+console.log(`Succeeded:      ${summary.successCount}`);
+console.log(`Failed:         ${summary.failedCount}`);
+console.log(`Parent rows:    ${summary.parentRows}`);
+console.log(`Children rows:  ${summary.childRows}`);
+console.log("Wrote out/parents.csv, out/children.csv, out/failures.csv");

@@ -13,18 +13,22 @@ bun install
 ## Run scraper from monorepo root
 
 ```bash
-bun run scrape -- <url>
+bun run scrape -- --input in/urls.txt
 ```
 
-Example:
+Example input file location (inside scraper package):
+
+- `packages/scraper/in/urls.txt`
+
+Optional browser mode:
 
 ```bash
-bun run scrape -- https://example.com
+bun run scrape -- --browser --input in/urls.txt
 ```
 
-Or run directly inside the package:
+Outputs are written under `packages/scraper/`:
 
-```bash
-cd packages/scraper
-bun run scrape -- <url>
-```
+- `out/parents.csv`
+- `out/children.csv`
+- `out/failures.csv`
+- `artifacts/*.html`
