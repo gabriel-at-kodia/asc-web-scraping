@@ -1,21 +1,10 @@
 {
   "name": "asc-web-scraping",
-  "module": "index.ts",
-  "type": "module",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "scrape": "bun index.ts"
-  },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "cheerio": "^1.2.0",
-    "playwright": "^1.58.2",
-    "playwright-extra": "^4.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2"
+    "scrape": "bun run --cwd packages/scraper scrape"
   }
 }

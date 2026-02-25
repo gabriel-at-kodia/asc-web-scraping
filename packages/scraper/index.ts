@@ -1,3 +1,4 @@
+import { mkdir } from "node:fs/promises";
 import { scrape } from "@/scraper.ts";
 import { CSV_HEADERS, extractProduct, rowToCsv } from "@/extract.ts";
 
@@ -21,8 +22,16 @@ console.log(`Scraping: ${url}${useBrowser ? " (headless browser)" : ""}\n`);
 
 const { status, title, html, $ } = await scrape(url, { browser: useBrowser });
 
-await Bun.write("scraped.html", html);
-console.log(`Saved HTML (${html.length.toLocaleString()} chars)\n`);
+const artifactsDir = "artifacts";
+const outDir = "out";
+await mkdir(artifactsDir, { recursive: true });
+await mkdir(outDir, { recursive: true });
+
+const htmlPath = `${artifactsDir}/scraped.html`;
+await Bun.write(htmlPath, html);
+console.log(
+  `Saved HTML to ${htmlPath} (${html.length.toLocaleString()} chars)\n`,
+);
 
 console.log(`Status: ${status}`);
 console.log(`Title:  ${title}\n`);
@@ -35,7 +44,7 @@ for (const header of CSV_HEADERS) {
   console.log(`  ${header}: ${preview}`);
 }
 
-const csvPath = "output.csv";
+const csvPath = `${outDir}/output.csv`;
 const csvContent = CSV_HEADERS.join(",") + "\n" + rowToCsv(row) + "\n";
 await Bun.write(csvPath, csvContent);
 console.log(`\nCSV written to ${csvPath}`);

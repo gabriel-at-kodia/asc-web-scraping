@@ -1,0 +1,21 @@
+{
+  "name": "scraper",
+  "type": "module",
+  "private": true,
+  "module": "index.ts",
+  "scripts": {
+    "scrape": "bun index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "playwright": "^1.58.2",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  }
+}
