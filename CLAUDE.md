@@ -14,6 +14,33 @@ Default to using Bun instead of Node.js.
 - Use `bunx <package> <command>` instead of `npx <package> <command>`
 - Bun automatically loads .env, so don't use dotenv.
 
+## Project: Scraper Pipeline
+
+The scraper in `packages/scraper` is a URL-list pipeline that writes Woo parent/child CSVs.
+
+- Run from repo root:
+  - `bun run scrape -- --input in/urls.txt`
+- Run from package dir:
+  - `cd packages/scraper && bun run scrape -- --input in/urls.txt`
+- Optional browser mode:
+  - `bun run scrape -- --browser --input in/urls.txt`
+
+Important path note:
+- Root script uses `--cwd packages/scraper`, so `--input` is resolved relative to `packages/scraper`.
+- Use `in/urls.txt` (not `packages/scraper/in/urls.txt`) unless passing an absolute path.
+
+Expected outputs (under `packages/scraper/`):
+- `out/parents.csv`
+- `out/children.csv`
+- `out/failures.csv`
+- `artifacts/*.html`
+
+Pipeline behavior:
+- Input file is one URL per line; blank lines and `#` comments are ignored.
+- No partial product rows are emitted.
+- If required fields are missing, the product is skipped and logged to `out/failures.csv`.
+- Parent search keywords are generated in reference-style shape (SKU-first, semicolon-separated).
+
 ## APIs
 
 - `Bun.serve()` supports WebSockets, HTTPS, and routes. Don't use `express`.
