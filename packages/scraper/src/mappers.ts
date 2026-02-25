@@ -8,11 +8,12 @@ const VVA_ATTRIBUTES_JSON = JSON.stringify([
 ]);
 
 function buildChildImageUrl(sku: string, index: number | null): string {
+  const id = sku.slice(0, -4) + 101 + sku.slice(-4);
   if (index === null) {
-    return `https://images.architecturalinfo.com/images/id/zoom/CUSTOM-${sku}.jpg`;
+    return `https://images.architecturalinfo.com/images/id/zoom/${id}.jpg`;
   }
 
-  return `https://images.architecturalinfo.com/images/id/zoom/CUSTOM-${sku}-${index
+  return `https://images.architecturalinfo.com/images/id/zoom/${id}-${index
     .toString()
     .padStart(2, "0")}.jpg`;
 }
@@ -47,7 +48,8 @@ export function mapParentRow(product: ParsedProduct): ParentRow {
     pdfLineDrawingLink: product.docs.lineDrawing,
   });
 
-  const images = [firstVariation.mainImage, ...firstVariation.subImages]
+  const generatedMainImage = buildChildImageUrl(firstVariation.childSku, null);
+  const images = [generatedMainImage, ...firstVariation.subImages]
     .filter(Boolean)
     .join(",");
 
@@ -82,7 +84,8 @@ export function mapChildRows(product: ParsedProduct): ChildRow[] {
   const heightValues = product.heights.join(",");
 
   return product.variations.map((variation) => {
-    const galleryImages = [variation.mainImage, ...variation.subImages]
+    const generatedMainImage = buildChildImageUrl(variation.childSku, null);
+    const galleryImages = [generatedMainImage, ...variation.subImages]
       .filter(Boolean)
       .join(",");
 

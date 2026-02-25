@@ -60,7 +60,6 @@ export function extractParsedProduct(
   for (const variation of variations) {
     if (!variation.finishName) missingFields.push("finishName");
     if (!variation.childSku) missingFields.push("childSku");
-    if (!variation.mainImage) missingFields.push("mainImage");
     if (!variation.packageWeight) missingFields.push("packageWeight");
     if (!variation.packageWeightUnit) missingFields.push("packageWeightUnit");
     if (!variation.itemsPerInnerPack) missingFields.push("itemsPerInnerPack");
@@ -231,7 +230,9 @@ function extractVariations(
     const finishCode = finish.code || "";
     const childSku = finishCode ? `${parentSku}${finishCode}` : "";
     const images = childSku ? skuToImages.get(childSku) : undefined;
-    const mainImage = images?.main ?? "";
+    const mainImage = childSku
+      ? images?.main ?? buildMainImageUrl(childSku)
+      : "";
     const subImages = images?.sub ?? [];
 
     variations.push({
@@ -272,6 +273,10 @@ function extractVariations(
   }
 
   return variations;
+}
+
+function buildMainImageUrl(childSku: string): string {
+  return `https://images.architecturalinfo.com/images/id/zoom/CUSTOM-${childSku}.jpg`;
 }
 
 function extractFinishes(
